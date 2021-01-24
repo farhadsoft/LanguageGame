@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 
 namespace LanguageGame
 {
@@ -30,27 +31,27 @@ namespace LanguageGame
                 throw new ArgumentException($"String is null or empty{nameof(phrase)}");
             }
 
-            string result = default;
-            string word = string.Empty;
+            StringBuilder result = new StringBuilder();
+            StringBuilder word = new StringBuilder();
             for (int i = 0; i < phrase.Length; i++)
             {
                 if (char.IsLetter(phrase[i]) || phrase[i] == '’')
                 {
-                    word += phrase[i];
+                    word.Append(phrase[i]);
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(word))
+                    if (!string.IsNullOrEmpty(word.ToString()))
                     {
-                        result += TranslatorWord(word);
-                        word = string.Empty;
+                        result.Append(TranslatorWord(word.ToString()));
+                        word.Clear();
                     }
 
-                    result += phrase[i];
+                    result.Append(phrase[i]);
                 }
             }
 
-            return (result is null) ? TranslatorWord(phrase) : result;
+            return string.IsNullOrEmpty(result.ToString()) ? TranslatorWord(phrase) : result.ToString();
         }
 
         private static string TranslatorWord(string word)
@@ -65,12 +66,12 @@ namespace LanguageGame
             else
             {
                 int count = 0;
-                string end = default;
+                StringBuilder end = new StringBuilder();
                 foreach (char c in word)
                 {
                     if (!vowel.Contains(c, StringComparison.CurrentCulture))
                     {
-                        end += c;
+                        end.Append(c);
                         count++;
                     }
                     else
