@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Globalization;
 
 namespace LanguageGame
 {
@@ -20,11 +21,72 @@ namespace LanguageGame
         /// "Eat" -> "Eatyay"
         /// "explain" -> "explainyay"
         /// "Smile" -> "Ilesmay"
-        /// "Glove" -> "Oveglay"
+        /// "Glove" -> "Oveglay".
         /// </example>
         public static string TranslateToPigLatin(string phrase)
         {
-            throw new NotImplementedException("You need to implement this method.");
+            if (string.IsNullOrWhiteSpace(phrase))
+            {
+                throw new ArgumentException($"String is null or empty{nameof(phrase)}");
+            }
+
+            string result = default;
+            string word = string.Empty;
+            for (int i = 0; i < phrase.Length; i++)
+            {
+                if (char.IsLetter(phrase[i]) || phrase[i] == '’')
+                {
+                    word += phrase[i];
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(word))
+                    {
+                        result += TranslatorWord(word);
+                        word = string.Empty;
+                    }
+
+                    result += phrase[i];
+                }
+            }
+
+            return (result is null) ? TranslatorWord(phrase) : result;
+        }
+
+        private static string TranslatorWord(string word)
+        {
+            string result = default;
+            string vowel = "aeiou";
+
+            if (vowel.ToUpper(CultureInfo.CurrentCulture).IndexOf(word[0], StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                result = word + "yay";
+            }
+            else
+            {
+                int count = 0;
+                string end = default;
+                foreach (char c in word)
+                {
+                    if (!vowel.Contains(c, StringComparison.CurrentCulture))
+                    {
+                        end += c;
+                        count++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                result = word[count..] + end + "ay";
+                if (char.IsUpper(word[0]))
+                {
+                    result = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(result.ToLower(CultureInfo.CurrentCulture));
+                }
+            }
+
+            return result;
         }
     }
 }
